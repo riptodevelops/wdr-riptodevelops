@@ -1,6 +1,103 @@
 /* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── PAGE FRAME OVERLAY ── */
+.page-frame {
+  position: fixed; inset: 0; z-index: 1000;
+  pointer-events: none;
+}
+
+/* Corner brackets - all 4 corners */
+.page-corner {
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--yellow); border-style: solid; opacity: 0.75;
+}
+.page-corner-tl { top: 14px; left: 14px; border-width: 2px 0 0 2px; }
+.page-corner-tr { top: 14px; right: 14px; border-width: 2px 2px 0 0; }
+.page-corner-bl { bottom: 14px; left: 14px; border-width: 0 0 2px 2px; }
+.page-corner-br { bottom: 14px; right: 14px; border-width: 0 2px 2px 0; }
+
+/* Left-side decorative bars */
+.page-left-bar {
+  position: absolute;
+  left: 10px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px;
+}
+.page-bar-line {
+  width: 2px; background: var(--yellow); opacity: 0.55;
+  border-radius: 2px;
+}
+.page-bar-line:nth-child(1) { height: 48px; }
+.page-bar-line:nth-child(2) { height: 12px; opacity: 0.25; }
+.page-bar-line:nth-child(3) { height: 28px; }
+.page-bar-line:nth-child(4) { height: 12px; opacity: 0.25; }
+.page-bar-line:nth-child(5) { height: 48px; }
+
+/* Right-side decorative bars */
+.page-right-bar {
+  position: absolute;
+  right: 10px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px;
+}
+
+/* Top center tick marks */
+.page-top-ticks {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: flex-end; gap: 5px;
+}
+.page-tick {
+  width: 1.5px; background: var(--yellow); opacity: 0.45; border-radius: 1px;
+}
+.page-tick:nth-child(1) { height: 6px; }
+.page-tick:nth-child(2) { height: 12px; opacity: 0.65; }
+.page-tick:nth-child(3) { height: 6px; }
+.page-tick:nth-child(4) { height: 18px; opacity: 0.75; }
+.page-tick:nth-child(5) { height: 6px; }
+.page-tick:nth-child(6) { height: 12px; opacity: 0.65; }
+.page-tick:nth-child(7) { height: 6px; }
+
+/* Bottom center ticks */
+.page-bottom-ticks {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: flex-start; gap: 5px;
+}
+
+/* Small dot markers on sides */
+.page-dot {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--yellow); opacity: 0.45;
+}
+.page-dot-lt { left: 10px; top: 35%; }
+.page-dot-lb { left: 10px; bottom: 35%; }
+.page-dot-rt { right: 10px; top: 35%; }
+.page-dot-rb { right: 10px; bottom: 35%; }
+
+/* Vertical edge lines */
+.page-edge-l {
+  position: absolute; left: 9px; top: 60px; bottom: 60px;
+  width: 1px; background: linear-gradient(to bottom, transparent, var(--yellow) 20%, var(--yellow) 80%, transparent);
+  opacity: 0.12;
+}
+.page-edge-r {
+  position: absolute; right: 9px; top: 60px; bottom: 60px;
+  width: 1px; background: linear-gradient(to bottom, transparent, var(--yellow) 20%, var(--yellow) 80%, transparent);
+  opacity: 0.12;
+}
+
+@media (max-width: 768px) {
+  .page-corner { width: 20px; height: 20px; }
+  .page-corner-tl, .page-corner-bl { left: 8px; }
+  .page-corner-tr, .page-corner-br { right: 8px; }
+  .page-corner-tl, .page-corner-tr { top: 8px; }
+  .page-corner-bl, .page-corner-br { bottom: 8px; }
+  .page-left-bar, .page-right-bar { display: none; }
+}
+
 :root {
   --bg: #000;
   --cream: #fff3e2;

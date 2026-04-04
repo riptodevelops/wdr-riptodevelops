@@ -116,6 +116,65 @@ export default function App() {
   return (
     <div className="wdr-root">
 
+      {/* FULL-PAGE FRAME OVERLAY (camera/viewfinder style) */}
+      <div className="page-frame">
+        {/* Corner brackets */}
+        <div className="page-corner page-corner-tl" />
+        <div className="page-corner page-corner-tr" />
+        <div className="page-corner page-corner-bl" />
+        <div className="page-corner page-corner-br" />
+
+        {/* Vertical edge lines */}
+        <div className="page-edge-l" />
+        <div className="page-edge-r" />
+
+        {/* Left decorative bars */}
+        <div className="page-left-bar">
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+        </div>
+
+        {/* Right decorative bars */}
+        <div className="page-right-bar">
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+          <div className="page-bar-line" />
+        </div>
+
+        {/* Top center ticks */}
+        <div className="page-top-ticks">
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+        </div>
+
+        {/* Bottom center ticks */}
+        <div className="page-bottom-ticks">
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+          <div className="page-tick" />
+        </div>
+
+        {/* Side dots */}
+        <div className="page-dot page-dot-lt" />
+        <div className="page-dot page-dot-lb" />
+        <div className="page-dot page-dot-rt" />
+        <div className="page-dot page-dot-rb" />
+      </div>
+
       {/* NAVBAR */}
       <nav className="navbar">
         <a href="#" className="navbar-brand">
