@@ -82,7 +82,6 @@ function CameraHero() {
           <div className="cam-bracket cam-bracket-tl" />
           <div className="cam-bracket cam-bracket-tr" />
           <div className="cam-center-content rv">
-            <img src="/images/wdr-logo-transparent.png" alt="WDR Logo" className="cam-logo" />
             <div className="cam-brand-text">BUILDING CREATIVE TRUST</div>
           </div>
           <div className="cam-bracket cam-bracket-bl" />
@@ -116,80 +115,27 @@ export default function App() {
   return (
     <div className="wdr-root">
 
-      {/* FULL-PAGE FRAME OVERLAY (camera/viewfinder style) */}
+      {/* SIDE BARS - yellow bars on left, right, top */}
       <div className="page-frame">
-        {/* Corner brackets */}
-        <div className="page-corner page-corner-tl" />
-        <div className="page-corner page-corner-tr" />
-        <div className="page-corner page-corner-bl" />
-        <div className="page-corner page-corner-br" />
-
-        {/* Vertical edge lines */}
-        <div className="page-edge-l" />
-        <div className="page-edge-r" />
-
-        {/* Left decorative bars */}
-        <div className="page-left-bar">
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-        </div>
-
-        {/* Right decorative bars */}
-        <div className="page-right-bar">
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-          <div className="page-bar-line" />
-        </div>
-
-        {/* Top center ticks */}
-        <div className="page-top-ticks">
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-        </div>
-
-        {/* Bottom center ticks */}
-        <div className="page-bottom-ticks">
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-          <div className="page-tick" />
-        </div>
-
-        {/* Side dots */}
-        <div className="page-dot page-dot-lt" />
-        <div className="page-dot page-dot-lb" />
-        <div className="page-dot page-dot-rt" />
-        <div className="page-dot page-dot-rb" />
+        <div className="top-bar-line" />
+        <div className="side-bar-left" />
+        <div className="side-bar-right" />
       </div>
 
       {/* NAVBAR */}
       <nav className="navbar">
         <a href="#" className="navbar-brand">
-          <img src="/images/wdr-logo-transparent.png" alt="WDR" className="nav-logo" />
-          <span className="nav-name">THE CREATIVE PANACEA</span>
+          <span className="nav-name">OWLED</span>
         </a>
-        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-          <span /><span /><span />
-        </button>
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
           {["Home","About","Work","Contact"].map(l => (
             <li key={l}><a href={`#${l.toLowerCase()}`} onClick={() => setMenuOpen(false)}>{l}</a></li>
           ))}
         </ul>
         <a href="#contact" className="btn-red btn-nav">SCHEDULE A CALL</a>
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          <span />
+        </button>
       </nav>
 
       {/* HERO with camera UI */}
@@ -355,8 +301,7 @@ export default function App() {
       <footer className="footer">
         <div className="footer-inner">
           <div className="footer-brand">
-            <img src="/images/wdr-logo-transparent.png" alt="WDR" className="footer-logo" />
-            <span className="footer-name">THE CREATIVE PANACEA</span>
+            <span className="footer-name">OWLED</span>
           </div>
           <div className="footer-links">
             {["Home","About","Work","Contact"].map(l => (
