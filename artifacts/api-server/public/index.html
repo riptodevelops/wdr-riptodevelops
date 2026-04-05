@@ -499,36 +499,36 @@ color: #000000;
         ['WDR DESIGNS', 'WDR DESIGNS'],
         ['WDR YOUTUBE', 'WDR YOUTUBE'],
         // CTA
-        ['EXPLORE OUR ECOSYSTEM', 'EXPLORE OUR SOLUTIONS'],
+        ['EXPLORE OUR SOLUTIONS', 'EXPLORE OUR SOLUTIONS'],
         // Hero paragraph (phrase by phrase — Framer splits text across spans)
-        ['OWLED blends AI-powered strategy, human storytelling, and unmatched scale', 'WHITE DRUNK RABBIT is a creative concierge service that replaces agency headaches with tailored solutions and frictionless management'],
-        ['OWLED blends AI-powered strategy', 'WHITE DRUNK RABBIT is a creative concierge service'],
-        ['OWLED blends strategy, storytelling, and scale', 'WHITE DRUNK RABBIT is a creative concierge service'],
-        ['OWLED blends', 'WHITE DRUNK RABBIT'],
-        ['OWLED operates', 'White Drunk Rabbit operates'],
+        ['WDR blends AI-powered strategy, human storytelling, and unmatched scale', 'WHITE DRUNK RABBIT is a creative concierge service that replaces agency headaches with tailored solutions and frictionless management'],
+        ['WDR blends AI-powered strategy', 'WHITE DRUNK RABBIT is a creative concierge service'],
+        ['WDR blends strategy, storytelling, and scale', 'WHITE DRUNK RABBIT is a creative concierge service'],
+        ['WDR blends', 'WHITE DRUNK RABBIT'],
+        ['White Drunk Rabbit operates', 'White Drunk Rabbit operates'],
         ['We take your data-led strategies and creative ideas and execute them with surgical precision across every channel.', 'We take your raw preferences and do the complex thinking for you, delivering polished results across integrated campaigns, digital strategy, and high-impact content.'],
         ['If you want to lead culture while we handle the complexity, you’ve come to the right place.', 'If you want to focus on your vision while we handle the chaos, you’ve come to the right place.'],
         // About section para 1
-        ['fastest-growing AI-native media companies', 'dedicated creative concierge service'],
-        ['As one of the fastest-growing AI-native media companies in the digital space,', 'As a dedicated creative concierge service in the digital space,'],
+        ['dedicated creative concierge service', 'dedicated creative concierge service'],
+        ['As a dedicated creative concierge service in the digital space,', 'As a dedicated creative concierge service in the digital space,'],
         ['150+ in-house strategists, creatives, filmmakers, and AI builders', 'tight-knit collective of problem-solvers, strategists, designers, and creators'],
         ['to deliver marketing that genuinely moves the culture and the metrics', 'to diagnose your creative roadblocks and deliver flawless solutions while you barely lift a finger'],
-        ['OWLED operates with the speed of an AI-powered startup', 'White Drunk Rabbit operates with the agility of a specialized task force'],
+        ['White Drunk Rabbit operates with the speed of an AI-powered startup', 'White Drunk Rabbit operates with the agility of a specialized task force'],
         ['and the delivery standards of a world-class creative studio.', 'and the polished delivery of a premium luxury service.'],
         ['united by one mission: to make brands impossible to ignore', 'united by a single, uncompromising goal: to diagnose your creative roadblocks and deliver flawless solutions while you barely lift a finger'],
         // About section para 2
-        ['This integrated, in-house approach guarantees speed, quality, and full accountability.', 'This streamlined, zero-friction model guarantees that what you picture in your head is exactly what gets delivered.'],
-        ['clarity in a complex digital world', 'a direct line from your mind to the market, acting as the ultimate interpreters for your brand'],
+        ['This streamlined, zero-friction model guarantees that what you picture in your head is exactly what gets delivered.', 'This streamlined, zero-friction model guarantees that what you picture in your head is exactly what gets delivered.'],
+        ['a direct line from your mind to the market, acting as the ultimate interpreters for your brand', 'a direct line from your mind to the market, acting as the ultimate interpreters for your brand'],
         ['transforming your challenges into successful, elegant, and scalable digital solutions that are executed flawlessly, every time. Let our integrated insight become your definitive advantage.', "You don't have to over-explain; you just tell us what you are thinking, and we give it structure, visual identity, and life. Let our creative intuition become your definitive advantage."],
         // Section headlines
-        ['BUILT IN-HOUSE FOR END-TO-END EXCELLENCE.', 'ENGINEERED FOR ZERO-FRICTION EXECUTION'],
+        ['ENGINEERED FOR ZERO-FRICTION EXCELLENCE.', 'ENGINEERED FOR ZERO-FRICTION EXECUTION'],
         ['BUILT IN-HOUSE FOR', 'ENGINEERED FOR'],
         ['END-TO-END EXCELLENCE.', 'ZERO-FRICTION EXECUTION'],
-        ['TRUSTED BY BRANDS THAT SHAPE THE WORLD', 'OUR PATRONS'],
+        ['OUR PATRONS', 'OUR PATRONS'],
         ['TRUSTED BY BRANDS', 'OUR PATRONS'],
-        // Remaining OWLED brand name
-        ['OWLED Media', 'WHITE DRUNK RABBIT'],
-        ['OWLED', 'WDR'],
+        // Remaining WDR brand name
+        ['WHITE DRUNK RABBIT', 'WHITE DRUNK RABBIT'],
+        ['WDR', 'WDR'],
         // HOOC in any remaining places
         ['HOOC', 'WDR YOUTUBE'],
       ];
@@ -584,9 +584,9 @@ color: #000000;
       return changed;
     }
     
-    // Replace OWLED logo images with WDR bunny
+    // Replace WDR logo images with WDR bunny
     function replaceLogoImages() {
-      // Replace all OWLED-related logo images
+      // Replace all WDR-related logo images
       var owledLogoPatterns = [
         'PzHouO3DqVy9erbzYgPPWEDlj0',
         'XhgsxXkv6tQsup5dqiawDuaSM',
@@ -676,17 +676,17 @@ color: #000000;
       mutations.forEach(function(m) {
         m.addedNodes.forEach(function(n) {
           if (n.textContent && (
-            n.textContent.indexOf('OWLED') !== -1 || 
+            n.textContent.indexOf('WDR') !== -1 || 
             n.textContent.indexOf('HOOC') !== -1 ||
             n.textContent.indexOf('AI-native media') !== -1 ||
             n.textContent.indexOf('BUILT IN-HOUSE') !== -1 ||
-            n.textContent.indexOf('EXPLORE OUR ECOSYSTEM') !== -1 ||
+            n.textContent.indexOf('EXPLORE OUR SOLUTIONS') !== -1 ||
             n.textContent.indexOf('fastest-growing') !== -1 ||
             n.textContent.indexOf('TRUSTED BY BRANDS') !== -1
           )) {
             needsUpdate = true;
           }
-          // Also handle added img elements with OWLED logo
+          // Also handle added img elements with WDR logo
           if (n.tagName === 'IMG' || (n.querySelectorAll && n.querySelectorAll('img').length > 0)) {
             replaceLogoImages();
           }
