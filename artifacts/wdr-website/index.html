@@ -792,4 +792,74 @@ color: #000000;
     });
   })();
   </script>
+
+  <style id="wdr-nav-logo-css">
+  /* Hide the OWLED SVG wordmark in the nav top-left and replace with WDR logo */
+  .framer-1yut4mc .svgContainer svg {
+    display: none !important;
+  }
+  .framer-1yut4mc {
+    background-image: url('/wdr-logo.png') !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    mix-blend-mode: screen !important;
+    filter: brightness(1.2) !important;
+  }
+  </style>
+
+  <script id="wdr-nav-intercept">
+  (function() {
+    function scrollToSectionByText(terms) {
+      // Walk all elements and find one whose direct text starts with one of the terms
+      var candidates = document.querySelectorAll('h1, h2, h3, [data-framer-name], .framer-text');
+      for (var i = 0; i < candidates.length; i++) {
+        var el = candidates[i];
+        var t = (el.textContent || '').trim().toUpperCase().replace(/s+/g, ' ');
+        for (var j = 0; j < terms.length; j++) {
+          if (t.indexOf(terms[j]) === 0 && t.length < terms[j].length + 100) {
+            el.closest('div') && el.closest('div').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function handleNavClick(text) {
+      text = (text || '').trim().toUpperCase().replace(/s+/g, ' ');
+      if (text === 'ABOUT') {
+        if (!scrollToSectionByText(['ENGINEERED FOR', 'ENGINEERED FOR ZERO-FRICTION'])) {
+          window.scrollTo({ top: document.body.scrollHeight * 0.25, behavior: 'smooth' });
+        }
+      } else if (text === 'WORK') {
+        if (!scrollToSectionByText(['OUR PATRONS', 'OUR WORK', 'CASE STUDIES'])) {
+          window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'smooth' });
+        }
+      } else if (text === 'CONTACT') {
+        if (!scrollToSectionByText(['SCHEDULE A CALL', 'CONTACT US', 'GET IN TOUCH'])) {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      var el = e.target;
+      // Walk up to find an anchor
+      for (var i = 0; i < 8; i++) {
+        if (!el) break;
+        if (el.tagName === 'A') {
+          var text = (el.textContent || '').trim().toUpperCase();
+          if (text === 'ABOUT' || text === 'WORK' || text === 'CONTACT') {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            handleNavClick(text);
+            return;
+          }
+        }
+        el = el.parentElement;
+      }
+    }, true);
+  })();
+  </script>
   </body></html>
