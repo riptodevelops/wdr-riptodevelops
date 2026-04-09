@@ -871,41 +871,5 @@ color: #000000;
   })();
   </script>
 
-  <style id="wdr-no-stagger">
-  /* Disable Framer appear animations - override inline opacity:0 across the board */
-  /* CSS !important overrides inline styles */
-  [style*="opacity:0"],
-  [style*="opacity: 0"],
-  [data-framer-component-type="RichTextContainer"],
-  [data-framer-appear-target] {
-    opacity: 1 !important;
-    transition: none !important;
-  }
-  /* Kill any Framer clip animations too */
-  [style*="clip-path"] {
-    clip-path: none !important;
-  }
-  /* Specifically skip the loading/intro overlay which should still animate */
-  .framer-hsvj5p-container [style*="opacity:0"] {
-    /* Loading overlay can stay as-is */
-    opacity: 0;
-  }
-  </style>
-  <script id="wdr-instant-load">
-  (function() {
-    function showAll() {
-      // Force all Framer animated-in elements to be fully visible immediately
-      var els = document.querySelectorAll('[style*="opacity:0"], [style*="opacity: 0"]');
-      for (var i = 0; i < els.length; i++) {
-        els[i].style.opacity = '1';
-        els[i].style.transform = 'none';
-        els[i].style.transition = 'none';
-      }
-    }
-    // Run immediately and again shortly after
-    showAll();
-    setTimeout(showAll, 100);
-    setTimeout(showAll, 500);
-    document.addEventListener('DOMContentLoaded', showAll);
-  })();
-  </script>  </body></html>
+  
+    </body></html>
