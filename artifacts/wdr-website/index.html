@@ -794,17 +794,25 @@ color: #000000;
   </script>
 
   <style id="wdr-nav-logo-css">
-  /* Hide the OWLED SVG wordmark in the nav top-left and replace with WDR logo */
+  /* Replace OWLED wordmark with WDR rabbit logo — resize from wide wordmark to square */
+  .framer-RFGzh .framer-1yut4mc {
+    width: 52px !important;
+    height: 52px !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
   .framer-1yut4mc .svgContainer svg {
     display: none !important;
   }
   .framer-1yut4mc {
-    background-image: url('/wdr-logo.png') !important;
+    background-image: url('/wdr-logo-t.png') !important;
     background-size: contain !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
-    mix-blend-mode: screen !important;
-    filter: brightness(1.2) !important;
+  }
+  /* Also fix img version of logo */
+  img[src*="wdr-logo.png"], img[src*="wdr-logo-t.png"] {
+    filter: brightness(1.1) !important;
   }
   </style>
 
@@ -862,4 +870,42 @@ color: #000000;
     }, true);
   })();
   </script>
-  </body></html>
+
+  <style id="wdr-no-stagger">
+  /* Disable Framer appear animations - override inline opacity:0 across the board */
+  /* CSS !important overrides inline styles */
+  [style*="opacity:0"],
+  [style*="opacity: 0"],
+  [data-framer-component-type="RichTextContainer"],
+  [data-framer-appear-target] {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  /* Kill any Framer clip animations too */
+  [style*="clip-path"] {
+    clip-path: none !important;
+  }
+  /* Specifically skip the loading/intro overlay which should still animate */
+  .framer-hsvj5p-container [style*="opacity:0"] {
+    /* Loading overlay can stay as-is */
+    opacity: 0;
+  }
+  </style>
+  <script id="wdr-instant-load">
+  (function() {
+    function showAll() {
+      // Force all Framer animated-in elements to be fully visible immediately
+      var els = document.querySelectorAll('[style*="opacity:0"], [style*="opacity: 0"]');
+      for (var i = 0; i < els.length; i++) {
+        els[i].style.opacity = '1';
+        els[i].style.transform = 'none';
+        els[i].style.transition = 'none';
+      }
+    }
+    // Run immediately and again shortly after
+    showAll();
+    setTimeout(showAll, 100);
+    setTimeout(showAll, 500);
+    document.addEventListener('DOMContentLoaded', showAll);
+  })();
+  </script>  </body></html>
