@@ -568,7 +568,10 @@ color: #000000;
         ['BUILT IN-HOUSE FOR', 'ENGINEERED FOR'],
         ['END-TO-END EXCELLENCE.', 'ZERO-FRICTION EXECUTION'],
         ['OUR PATRONS', 'OUR PATRONS'],
-        ['TRUSTED BY BRANDS', 'OUR PATRONS'],
+        ['TRUSTED BY BRANDS', ''],
+        ['Trusted by brands that', ''],
+        ['Trusted by brands', ''],
+        ['A curated reel of our most insightful work across all three divisions', 'A showcase of our finest creative work across all three divisions'],
         // Remaining WDR brand name
         ['WHITE DRUNK RABBIT', 'WHITE DRUNK RABBIT'],
         ['WDR', 'WDR'],
@@ -760,7 +763,13 @@ color: #000000;
             n.textContent.indexOf('BUILT IN-HOUSE') !== -1 ||
             n.textContent.indexOf('EXPLORE OUR SOLUTIONS') !== -1 ||
             n.textContent.indexOf('fastest-growing') !== -1 ||
-            n.textContent.indexOf('TRUSTED BY BRANDS') !== -1
+            n.textContent.indexOf('TRUSTED BY BRANDS') !== -1 ||
+            n.textContent.indexOf('Trusted by brands') !== -1 ||
+            n.textContent.indexOf('shape') !== -1 ||
+            n.textContent.indexOf('the world') !== -1 ||
+            n.textContent.indexOf('showreel') !== -1 ||
+            n.textContent.indexOf('our vision') !== -1 ||
+            n.textContent.indexOf('in Motion') !== -1
           )) {
             needsUpdate = true;
           }
