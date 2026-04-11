@@ -854,20 +854,27 @@ color: #000000;
     }
 
     function forceCloseMenu() {
-      // 1. Find the nav overlay and hide it via CSS
+      // 1. Hide the nav overlay immediately via CSS
       var overlay = document.querySelector('.framer-8u9401');
       if (overlay) {
         overlay.style.cssText += ';opacity:0 !important;transform:translateY(50px) !important;pointer-events:none !important;';
       }
-      // 2. Remove body scroll lock that Framer sets
+      // 2. Remove body scroll lock
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
       document.documentElement.style.overflow = '';
 
-      // 3. After animation time, click nav-trigger to sync Framer's internal state
-      //    so the hamburger menu works correctly next time
+      // 3. Click nav-trigger WHILE CSS overrides still hide the overlay
+      //    This syncs Framer state from OPEN -> CLOSED without any visual flash
+      setTimeout(function() {
+        var trigger = document.getElementById('nav-trigger');
+        if (trigger) trigger.click();
+      }, 100);
+
+      // 4. AFTER Framer has processed the state change, remove CSS overrides
+      //    By now Framer state is CLOSED so overlay stays hidden naturally
       setTimeout(function() {
         if (overlay) {
           overlay.style.cssText = overlay.style.cssText
@@ -875,9 +882,7 @@ color: #000000;
             .replace(/transform:[^;]*!important;?/g,'')
             .replace(/pointer-events:[^;]*!important;?/g,'');
         }
-        var trigger = document.getElementById('nav-trigger');
-        if (trigger) trigger.click();
-      }, 600);
+      }, 800);
     }
 
     function scrollToWork() {
@@ -905,7 +910,23 @@ color: #000000;
     }
 
     function scrollToContact() {
-      window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'});
+      // Find SCHEDULE A CALL text and scroll to its section
+      var all = document.querySelectorAll('.framer-text');
+      for (var i=0; i<all.length; i++) {
+        var t = (all[i].textContent||'').trim().toUpperCase();
+        if (t.indexOf('SCHEDULE')!==-1 && t.indexOf('CALL')!==-1) {
+          var target = all[i];
+          for (var k=0; k<15; k++) {
+            if (!target.parentElement) break;
+            target = target.parentElement;
+            if (target.getBoundingClientRect().height > 300) break;
+          }
+          target.scrollIntoView({behavior:'smooth',block:'start'});
+          return;
+        }
+      }
+      // Fallback: scroll to 90% of page (not absolute bottom)
+      window.scrollTo({top: document.body.scrollHeight*0.9, behavior:'smooth'});
     }
 
     document.addEventListener('click', function(e) {
