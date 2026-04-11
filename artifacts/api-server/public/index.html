@@ -811,84 +811,123 @@ color: #000000;
 
   <script id="wdr-nav-intercept">
   (function() {
-    // ── Scroll helpers ──
-    function scrollToId(id) {
-      var el = document.getElementById(id);
-      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return true; }
-      return false;
+    // ═══════════════════════════════════════════
+    // LAYER 1: Override history.pushState as safety net
+    // If a click somehow reaches Framer, this stops navigation
+    // ═══════════════════════════════════════════
+    var BLOCKED = ['/about','/work','/contact','/comming-soon','/hooc'];
+    var _push = history.pushState.bind(history);
+    history.pushState = function(s,t,url) {
+      if (url) {
+        try {
+          var p = new URL(String(url), location.href).pathname;
+          if (BLOCKED.some(function(r){ return p===r||p.endsWith(r); })) return;
+        } catch(e){}
+      }
+      return _push(s,t,url);
+    };
+    window.addEventListener('popstate', function(){
+      var p = location.pathname;
+      if (BLOCKED.some(function(r){ return p===r||p.endsWith(r); }))
+        history.replaceState(null,'','/');
+    });
+
+    // ═══════════════════════════════════════════
+    // LAYER 2: Intercept nav link clicks (capture phase)
+    // ═══════════════════════════════════════════
+    var NAV_LABELS = ['HOME','ABOUT','WORK','CONTACT'];
+
+    function getNavLabel(el) {
+      // Walk up from click target to find an <a> tag with nav text
+      for (var i = 0; i < 10; i++) {
+        if (!el) return null;
+        // Check if this element or an ancestor <a> has nav label text
+        if (el.tagName === 'A' || el.classList.contains('framer-text')) {
+          var text = (el.textContent||'').trim().toUpperCase();
+          if (text.length > 0 && text.length <= 10 && NAV_LABELS.indexOf(text) !== -1) {
+            return text;
+          }
+        }
+        el = el.parentElement;
+      }
+      return null;
     }
 
-    function scrollToBottom() {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    function forceCloseMenu() {
+      // 1. Find the nav overlay and hide it via CSS
+      var overlay = document.querySelector('.framer-8u9401');
+      if (overlay) {
+        overlay.style.cssText += ';opacity:0 !important;transform:translateY(50px) !important;pointer-events:none !important;';
+      }
+      // 2. Remove body scroll lock that Framer sets
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.documentElement.style.overflow = '';
+
+      // 3. After animation time, click nav-trigger to sync Framer's internal state
+      //    so the hamburger menu works correctly next time
+      setTimeout(function() {
+        if (overlay) {
+          overlay.style.cssText = overlay.style.cssText
+            .replace(/opacity:[^;]*!important;?/g,'')
+            .replace(/transform:[^;]*!important;?/g,'')
+            .replace(/pointer-events:[^;]*!important;?/g,'');
+        }
+        var trigger = document.getElementById('nav-trigger');
+        if (trigger) trigger.click();
+      }, 600);
+    }
+
+    function scrollToWork() {
+      var el = document.getElementById('what-we-build');
+      if (el) { el.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+      window.scrollTo({top: document.body.scrollHeight*0.55, behavior:'smooth'});
     }
 
     function scrollToAbout() {
-      // Find the ABOUT section by looking for the ENGINEERED heading
       var all = document.querySelectorAll('.framer-text');
-      for (var i = 0; i < all.length; i++) {
-        var t = (all[i].textContent || '').trim().toUpperCase().replace(/\s+/g, ' ');
-        if (t.indexOf('ENGINEERED') !== -1 || t.indexOf('ZERO-FRICTION') !== -1) {
+      for (var i=0; i<all.length; i++) {
+        var t = (all[i].textContent||'').trim().toUpperCase();
+        if (t.indexOf('ENGINEERED')!==-1) {
           var target = all[i];
-          for (var k = 0; k < 15; k++) {
+          for (var k=0; k<15; k++) {
             if (!target.parentElement) break;
             target = target.parentElement;
             if (target.getBoundingClientRect().height > 300) break;
           }
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          target.scrollIntoView({behavior:'smooth',block:'start'});
           return;
         }
       }
-      window.scrollTo({ top: document.body.scrollHeight * 0.3, behavior: 'smooth' });
+      window.scrollTo({top: document.body.scrollHeight*0.3, behavior:'smooth'});
     }
 
-    // ── Route-to-scroll mapping ──
-    // When Framer tries to navigate to these pages, we scroll instead.
-    // Framer naturally closes its own menu before calling pushState, so menu close is free.
-    var ROUTE_SCROLL = {
-      '/about': function() { scrollToAbout(); },
-      '/work': function() { scrollToId('what-we-build') || window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'smooth' }); },
-      '/contact': function() { scrollToBottom(); },
-      '/comming-soon': function() { scrollToBottom(); },
-      '/hooc': function() { scrollToBottom(); }
-    };
-
-    function matchRoute(url) {
-      try {
-        var p = new URL(String(url), location.href).pathname;
-        for (var route in ROUTE_SCROLL) {
-          if (p === route || p.endsWith(route)) return route;
-        }
-      } catch(e) {}
-      return null;
+    function scrollToContact() {
+      window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'});
     }
 
-    // ── Override history.pushState ──
-    // This is where the real interception happens: Framer calls pushState to navigate.
-    // We block it and scroll instead. Framer has already closed the menu by this point.
-    var _push = history.pushState.bind(history);
-    history.pushState = function(state, title, url) {
-      var route = url ? matchRoute(String(url)) : null;
-      if (route) {
-        // Don't navigate — scroll to the section instead
-        setTimeout(function() { ROUTE_SCROLL[route](); }, 100);
-        return;
-      }
-      return _push(state, title, url);
-    };
+    document.addEventListener('click', function(e) {
+      var label = getNavLabel(e.target);
+      if (!label) return; // not a nav click — let it through
 
-    // Catch popstate (back button) for blocked routes
-    window.addEventListener('popstate', function() {
-      var p = location.pathname;
-      var matched = matchRoute(location.href);
-      if (matched) history.replaceState(null, '', '/');
-    });
+      // Block Framer from processing this click
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      e.stopPropagation();
 
-    // ── Also handle hash links for WORK (what-we-build) ──
-    window.addEventListener('hashchange', function() {
-      if (location.hash === '#what-we-build') {
-        setTimeout(function() { scrollToId('what-we-build'); }, 100);
-      }
-    });
+      // Close the mobile menu
+      forceCloseMenu();
+
+      // Scroll after menu close animation
+      setTimeout(function() {
+        if (label === 'HOME')    window.scrollTo({top:0, behavior:'smooth'});
+        if (label === 'ABOUT')   scrollToAbout();
+        if (label === 'WORK')    scrollToWork();
+        if (label === 'CONTACT') scrollToContact();
+      }, 350);
+    }, true); // capture phase — fires before Framer
   })();
   </script>
 
