@@ -811,15 +811,26 @@ color: #000000;
 
   <script id="wdr-nav-intercept">
   (function() {
-    function scrollToSectionByText(terms) {
-      // Walk all elements and find one whose direct text starts with one of the terms
-      var candidates = document.querySelectorAll('h1, h2, h3, [data-framer-name], .framer-text');
+    function norm(s) {
+      return (s || '').trim().toUpperCase().replace(/\s+/g, ' ');
+    }
+
+    function scrollToSection(terms) {
+      var candidates = document.querySelectorAll('.framer-text, h1, h2, h3, [data-framer-name]');
       for (var i = 0; i < candidates.length; i++) {
         var el = candidates[i];
-        var t = (el.textContent || '').trim().toUpperCase().replace(/s+/g, ' ');
+        var t = norm(el.textContent);
         for (var j = 0; j < terms.length; j++) {
-          if (t.indexOf(terms[j]) === 0 && t.length < terms[j].length + 100) {
-            el.closest('div') && el.closest('div').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (t === terms[j] || t.indexOf(terms[j]) === 0) {
+            // Scroll to the nearest section container
+            var target = el;
+            for (var k = 0; k < 10; k++) {
+              if (!target.parentElement) break;
+              target = target.parentElement;
+              var rect = target.getBoundingClientRect();
+              if (rect.height > 200) break;
+            }
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             return true;
           }
         }
@@ -827,18 +838,24 @@ color: #000000;
       return false;
     }
 
-    function handleNavClick(text) {
-      text = (text || '').trim().toUpperCase().replace(/s+/g, ' ');
-      if (text === 'ABOUT') {
-        if (!scrollToSectionByText(['ENGINEERED FOR', 'ENGINEERED FOR ZERO-FRICTION'])) {
-          window.scrollTo({ top: document.body.scrollHeight * 0.25, behavior: 'smooth' });
+    function handleNav(text) {
+      text = norm(text);
+      // Close the mobile menu first if open
+      var menuClose = document.querySelector('[aria-label="Close"], [data-framer-name="Close"], .framer-menu-close');
+      if (menuClose) menuClose.click();
+
+      if (text === 'HOME') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (text === 'ABOUT') {
+        if (!scrollToSection(['ENGINEERED FOR', 'ENGINEERED FOR ZERO-FRICTION', 'ZERO-FRICTION EXECUTION'])) {
+          window.scrollTo({ top: document.body.scrollHeight * 0.28, behavior: 'smooth' });
         }
       } else if (text === 'WORK') {
-        if (!scrollToSectionByText(['OUR PATRONS', 'OUR WORK', 'CASE STUDIES'])) {
+        if (!scrollToSection(['OUR PATRONS', 'OUR WORK', 'EXPLORE OUR SOLUTIONS'])) {
           window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'smooth' });
         }
       } else if (text === 'CONTACT') {
-        if (!scrollToSectionByText(['SCHEDULE A CALL', 'CONTACT US', 'GET IN TOUCH'])) {
+        if (!scrollToSection(['SCHEDULE A CALL', 'CONTACT US', 'GET IN TOUCH', 'LET'S TALK'])) {
           window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
       }
@@ -846,17 +863,16 @@ color: #000000;
 
     document.addEventListener('click', function(e) {
       var el = e.target;
-      // Walk up to find an anchor
-      for (var i = 0; i < 8; i++) {
+      // Walk up 10 levels — Framer uses nested divs, not always <a> tags
+      for (var i = 0; i < 10; i++) {
         if (!el) break;
-        if (el.tagName === 'A') {
-          var text = (el.textContent || '').trim().toUpperCase();
-          if (text === 'ABOUT' || text === 'WORK' || text === 'CONTACT') {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            handleNavClick(text);
-            return;
-          }
+        var text = norm(el.textContent);
+        // Only match if the element's own text is short (nav label, not whole section)
+        if ((text === 'HOME' || text === 'ABOUT' || text === 'WORK' || text === 'CONTACT') && (el.textContent || '').trim().length < 20) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          handleNav(text);
+          return;
         }
         el = el.parentElement;
       }
