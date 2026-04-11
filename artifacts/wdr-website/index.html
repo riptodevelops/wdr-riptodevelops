@@ -233,11 +233,7 @@
     <!-- End of headEnd -->
 
   <style id="wdr-custom-styles">
-  /* WDR Logo Fix - make black bg transparent using screen blend mode */
-  img[src*="wdr-logo.png"] {
-    mix-blend-mode: screen !important;
-    filter: brightness(1.1) !important;
-  }
+  /* WDR Logo - RGBA transparent, no blend mode needed */
   /* Loading screen logo replacement - target all breakpoint variants of the circular logo */
   .framer-6w2kmo,
   .framer-h50w2q,
@@ -805,15 +801,12 @@ color: #000000;
     display: none !important;
   }
   .framer-1yut4mc {
-    background-image: url('/images/wdr-logo.png') !important;
+    background-image: url('/images/wdr-rabbit-nav.png') !important;
     background-size: contain !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
   }
-  /* Mix-blend-mode makes black background transparent on dark nav */
-  img[src*="wdr-logo.png"] {
-    mix-blend-mode: screen !important;
-  }
+
   </style>
 
   <script id="wdr-nav-intercept">
