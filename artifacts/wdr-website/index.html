@@ -811,137 +811,84 @@ color: #000000;
 
   <script id="wdr-nav-intercept">
   (function() {
-    // ── 1. Block Framer router from navigating to non-existent sub-pages ──
-    var BLOCKED = ['/about', '/work', '/contact', '/comming-soon', '/hooc'];
-    var _push = history.pushState.bind(history);
-    history.pushState = function(s, t, url) {
-      if (url) {
-        try {
-          var p = new URL(String(url), location.href).pathname;
-          if (BLOCKED.some(function(r) { return p === r || p.endsWith(r); })) return;
-        } catch(e) {}
-      }
-      return _push(s, t, url);
-    };
-    window.addEventListener('popstate', function() {
-      var p = location.pathname;
-      if (BLOCKED.some(function(r) { return p === r || p.endsWith(r); }))
-        history.replaceState(null, '', '/');
-    });
-
-    // ── 2. Tag ABOUT and CONTACT sections at runtime after page loads ──
-    function tagSections() {
-      var all = document.querySelectorAll('*');
-      for (var i = 0; i < all.length; i++) {
-        var el = all[i];
-        // Only look at elements whose direct text includes the keyword (not entire subtree)
-        var ownText = '';
-        for (var j = 0; j < el.childNodes.length; j++) {
-          if (el.childNodes[j].nodeType === 3) ownText += el.childNodes[j].textContent;
-        }
-        ownText = ownText.trim().toUpperCase();
-
-        if (!document.getElementById('wdr-about') && (ownText.indexOf('ENGINEERED') !== -1 || ownText.indexOf('ZERO-FRICTION') !== -1)) {
-          // Walk up to find a large section container
-          var t = el;
-          for (var k = 0; k < 15; k++) {
-            if (!t.parentElement) break;
-            t = t.parentElement;
-            if (t.getBoundingClientRect().height > 300 && t.getBoundingClientRect().width > 300) {
-              t.id = 'wdr-about';
-              break;
-            }
-          }
-        }
-
-        if (!document.getElementById('wdr-contact') && (ownText.indexOf('SCHEDULE A CALL') !== -1 || ownText.indexOf('GET IN TOUCH') !== -1)) {
-          var t2 = el;
-          for (var k2 = 0; k2 < 15; k2++) {
-            if (!t2.parentElement) break;
-            t2 = t2.parentElement;
-            if (t2.getBoundingClientRect().height > 300 && t2.getBoundingClientRect().width > 300) {
-              t2.id = 'wdr-contact';
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    // ── 3. Close the mobile nav menu ──
-    function closeMenu() {
-      // Click the hamburger/nav-trigger to close — no Escape (that causes Framer to navigate home)
-      var trigger = document.getElementById('nav-trigger');
-      if (!trigger) return;
-      var overlay = document.querySelector('[data-framer-name="Nav Overlay"], [data-framer-name="nav overlay"], .framer-8u9401');
-      if (overlay) {
-        var style = window.getComputedStyle(overlay);
-        var isVisible = parseFloat(style.opacity) > 0.1 || overlay.getBoundingClientRect().height > 100;
-        if (isVisible) trigger.click();
-      } else {
-        // Try clicking trigger anyway — if menu is open it will close, if closed nothing changes
-        trigger.click();
-      }
-    }
-
-    // ── 4. Scroll to section by ID ──
-    function scrollToId(id, fallbackPct) {
+    // ── Scroll helpers ──
+    function scrollToId(id) {
       var el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return true;
-      }
-      window.scrollTo({ top: document.body.scrollHeight * fallbackPct, behavior: 'smooth' });
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return true; }
       return false;
     }
 
-    // ── 5. Handle nav clicks ──
-    function handleNav(text) {
-      closeMenu();
-      setTimeout(function() {
-        if (text === 'HOME') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (text === 'ABOUT') {
-          if (!document.getElementById('wdr-about')) tagSections();
-          scrollToId('wdr-about', 0.3);
-        } else if (text === 'WORK') {
-          // what-we-build is the actual anchor ID on the work section
-          scrollToId('what-we-build', 0.55);
-        } else if (text === 'CONTACT') {
-          if (!document.getElementById('wdr-contact')) tagSections();
-          if (!scrollToId('wdr-contact', 1)) {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-          }
-        }
-      }, 250);
+    function scrollToBottom() {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
-    // ── 6. Intercept all nav item clicks ──
-    document.addEventListener('click', function(e) {
-      var el = e.target;
-      for (var i = 0; i < 10; i++) {
-        if (!el) break;
-        var len = (el.textContent || '').trim().length;
-        var text = (el.textContent || '').trim().toUpperCase();
-        if (len > 0 && len <= 8 && (text === 'HOME' || text === 'ABOUT' || text === 'WORK' || text === 'CONTACT')) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          e.stopPropagation();
-          handleNav(text);
+    function scrollToAbout() {
+      // Find the ABOUT section by looking for the ENGINEERED heading
+      var all = document.querySelectorAll('.framer-text');
+      for (var i = 0; i < all.length; i++) {
+        var t = (all[i].textContent || '').trim().toUpperCase().replace(/\s+/g, ' ');
+        if (t.indexOf('ENGINEERED') !== -1 || t.indexOf('ZERO-FRICTION') !== -1) {
+          var target = all[i];
+          for (var k = 0; k < 15; k++) {
+            if (!target.parentElement) break;
+            target = target.parentElement;
+            if (target.getBoundingClientRect().height > 300) break;
+          }
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           return;
         }
-        el = el.parentElement;
       }
-    }, true);
-
-    // Tag sections as soon as DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() { setTimeout(tagSections, 1000); });
-    } else {
-      setTimeout(tagSections, 1000);
+      window.scrollTo({ top: document.body.scrollHeight * 0.3, behavior: 'smooth' });
     }
-    // Also tag after full load (React hydration happens after DOMContentLoaded)
-    window.addEventListener('load', function() { setTimeout(tagSections, 1500); });
+
+    // ── Route-to-scroll mapping ──
+    // When Framer tries to navigate to these pages, we scroll instead.
+    // Framer naturally closes its own menu before calling pushState, so menu close is free.
+    var ROUTE_SCROLL = {
+      '/about': function() { scrollToAbout(); },
+      '/work': function() { scrollToId('what-we-build') || window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'smooth' }); },
+      '/contact': function() { scrollToBottom(); },
+      '/comming-soon': function() { scrollToBottom(); },
+      '/hooc': function() { scrollToBottom(); }
+    };
+
+    function matchRoute(url) {
+      try {
+        var p = new URL(String(url), location.href).pathname;
+        for (var route in ROUTE_SCROLL) {
+          if (p === route || p.endsWith(route)) return route;
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    // ── Override history.pushState ──
+    // This is where the real interception happens: Framer calls pushState to navigate.
+    // We block it and scroll instead. Framer has already closed the menu by this point.
+    var _push = history.pushState.bind(history);
+    history.pushState = function(state, title, url) {
+      var route = url ? matchRoute(String(url)) : null;
+      if (route) {
+        // Don't navigate — scroll to the section instead
+        setTimeout(function() { ROUTE_SCROLL[route](); }, 100);
+        return;
+      }
+      return _push(state, title, url);
+    };
+
+    // Catch popstate (back button) for blocked routes
+    window.addEventListener('popstate', function() {
+      var p = location.pathname;
+      var matched = matchRoute(location.href);
+      if (matched) history.replaceState(null, '', '/');
+    });
+
+    // ── Also handle hash links for WORK (what-we-build) ──
+    window.addEventListener('hashchange', function() {
+      if (location.hash === '#what-we-build') {
+        setTimeout(function() { scrollToId('what-we-build'); }, 100);
+      }
+    });
   })();
   </script>
 
