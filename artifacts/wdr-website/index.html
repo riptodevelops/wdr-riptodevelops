@@ -805,14 +805,14 @@ color: #000000;
     display: none !important;
   }
   .framer-1yut4mc {
-    background-image: url('/wdr-logo-t.png') !important;
+    background-image: url('/images/wdr-logo.png') !important;
     background-size: contain !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
   }
-  /* Also fix img version of logo */
-  img[src*="wdr-logo.png"], img[src*="wdr-logo-t.png"] {
-    filter: brightness(1.1) !important;
+  /* Mix-blend-mode makes black background transparent on dark nav */
+  img[src*="wdr-logo.png"] {
+    mix-blend-mode: screen !important;
   }
   </style>
 
