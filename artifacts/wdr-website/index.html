@@ -910,23 +910,38 @@ color: #000000;
     }
 
     function scrollToContact() {
-      // Find SCHEDULE A CALL text and scroll to its section
-      var all = document.querySelectorAll('.framer-text');
-      for (var i=0; i<all.length; i++) {
-        var t = (all[i].textContent||'').trim().toUpperCase();
-        if (t.indexOf('SCHEDULE')!==-1 && t.indexOf('CALL')!==-1) {
-          var target = all[i];
-          for (var k=0; k<15; k++) {
+      // Try to find the Schedule a Call button/link on the page
+      var links = document.querySelectorAll('a, [role=button]');
+      for (var i=0; i<links.length; i++) {
+        var t = (links[i].textContent||'').trim().toUpperCase().replace(/\s+/g,' ');
+        if (t === 'SCHEDULE A CALL') {
+          var target = links[i];
+          for (var k=0; k<10; k++) {
             if (!target.parentElement) break;
             target = target.parentElement;
-            if (target.getBoundingClientRect().height > 300) break;
+            if (target.getBoundingClientRect().height > 200) break;
           }
           target.scrollIntoView({behavior:'smooth',block:'start'});
           return;
         }
       }
-      // Fallback: scroll to 90% of page (not absolute bottom)
-      window.scrollTo({top: document.body.scrollHeight*0.9, behavior:'smooth'});
+      // Fallback: try all elements
+      var all = document.querySelectorAll('*');
+      for (var j=0; j<all.length; j++) {
+        var txt = (all[j].textContent||'').trim().toUpperCase().replace(/\s+/g,' ');
+        if (txt === 'SCHEDULE A CALL' && all[j].children.length === 0) {
+          var sec = all[j];
+          for (var m=0; m<12; m++) {
+            if (!sec.parentElement) break;
+            sec = sec.parentElement;
+            if (sec.getBoundingClientRect().height > 200) break;
+          }
+          sec.scrollIntoView({behavior:'smooth',block:'start'});
+          return;
+        }
+      }
+      // Last fallback: scroll to ~85% of page
+      window.scrollTo({top: document.body.scrollHeight*0.85, behavior:'smooth'});
     }
 
     document.addEventListener('click', function(e) {
