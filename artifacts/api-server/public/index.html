@@ -811,52 +811,51 @@ color: #000000;
 
   <script id="wdr-nav-intercept">
   (function() {
-    // Block Framer router from navigating to non-existent sub-pages
-    var BLOCKED_ROUTES = ['/about', '/work', '/contact', '/comming-soon', '/hooc'];
-    var BASE = location.pathname.replace(/\/[^\/]*$/, '');
-
-    function isBlocked(url) {
-      try {
-        var u = new URL(url, location.href);
-        var path = u.pathname;
-        return BLOCKED_ROUTES.some(function(r) { return path === r || path === BASE + r || path.endsWith(r); });
-      } catch(e) { return false; }
-    }
-
-    // Override history.pushState to intercept Framer client-side navigation
-    var _pushState = history.pushState.bind(history);
-    history.pushState = function(state, title, url) {
-      if (url && isBlocked(String(url))) {
-        // Don't navigate — let our scroll handler deal with it
-        return;
+    // ── Block Framer router from navigating to non-existent sub-pages ──
+    var BLOCKED = ['/about', '/work', '/contact', '/comming-soon', '/hooc'];
+    var _push = history.pushState.bind(history);
+    history.pushState = function(s, t, url) {
+      if (url) {
+        try {
+          var p = new URL(String(url), location.href).pathname;
+          if (BLOCKED.some(function(r) { return p === r || p.endsWith(r); })) return;
+        } catch(e) {}
       }
-      return _pushState(state, title, url);
+      return _push(s, t, url);
     };
-
-    // Also catch popstate in case something slips through
-    window.addEventListener('popstate', function(e) {
-      if (isBlocked(location.href)) {
+    window.addEventListener('popstate', function() {
+      var p = location.pathname;
+      if (BLOCKED.some(function(r) { return p === r || p.endsWith(r); }))
         history.replaceState(null, '', '/');
-      }
     });
 
-    function norm(s) {
-      return (s || '').trim().toUpperCase().replace(/\s+/g, ' ');
+    // ── Helpers ──
+    function norm(s) { return (s||'').trim().toUpperCase().replace(/\s+/g,' '); }
+
+    function closeMenu() {
+      // The Framer hamburger is #nav-trigger — clicking it again closes the menu
+      var trigger = document.querySelector('#nav-trigger');
+      if (trigger) {
+        // Only click to close if menu is visibly open (overlay is shown)
+        var overlay = document.querySelector('.framer-8u9401, [data-framer-name="nav overlay"], [data-framer-name="Nav Overlay"]');
+        var isOpen = overlay && parseFloat(getComputedStyle(overlay).opacity) > 0.1;
+        if (isOpen) trigger.click();
+      }
     }
 
     function scrollToSection(terms) {
-      var candidates = document.querySelectorAll('.framer-text, h1, h2, h3, [data-framer-name]');
-      for (var i = 0; i < candidates.length; i++) {
-        var el = candidates[i];
+      var all = document.querySelectorAll('.framer-text, h1, h2, h3, h4, [data-framer-name]');
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i];
         var t = norm(el.textContent);
         for (var j = 0; j < terms.length; j++) {
+          // Match if starts with OR equals the term
           if (t === terms[j] || t.indexOf(terms[j]) === 0) {
             var target = el;
-            for (var k = 0; k < 10; k++) {
+            for (var k = 0; k < 12; k++) {
               if (!target.parentElement) break;
               target = target.parentElement;
-              var rect = target.getBoundingClientRect();
-              if (rect.height > 200) break;
+              if (target.getBoundingClientRect().height > 200) break;
             }
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             return true;
@@ -868,33 +867,41 @@ color: #000000;
 
     function handleNav(text) {
       text = norm(text);
-      if (text === 'HOME') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (text === 'ABOUT') {
-        if (!scrollToSection(['ENGINEERED FOR', 'ENGINEERED FOR ZERO-FRICTION', 'ZERO-FRICTION EXECUTION'])) {
-          window.scrollTo({ top: document.body.scrollHeight * 0.28, behavior: 'smooth' });
+      // Close mobile menu first, then scroll after short delay
+      closeMenu();
+      setTimeout(function() {
+        if (text === 'HOME') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (text === 'ABOUT') {
+          // About section — "ENGINEERED FOR ZERO-FRICTION EXECUTION"
+          if (!scrollToSection(['ENGINEERED', 'ZERO-FRICTION', 'ENGINEERED FOR'])) {
+            window.scrollTo({ top: document.body.scrollHeight * 0.28, behavior: 'smooth' });
+          }
+        } else if (text === 'WORK') {
+          // Works section — "explore" / "IN ACTION" / "PATRONS" / "EXPLORE OUR SOLUTIONS"
+          if (!scrollToSection(['EXPLORE OUR SOLUTIONS', 'EXPLORE', 'IN ACTION', 'PATRONS', 'PORTFOLIO'])) {
+            window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'smooth' });
+          }
+        } else if (text === 'CONTACT') {
+          // Contact / footer — "SCHEDULE A CALL"
+          if (!scrollToSection(['SCHEDULE A CALL', 'CONTACT US', 'GET IN TOUCH'])) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          }
         }
-      } else if (text === 'WORK') {
-        if (!scrollToSection(['OUR PATRONS', 'OUR WORK', 'EXPLORE OUR SOLUTIONS'])) {
-          window.scrollTo({ top: document.body.scrollHeight * 0.55, behavior: 'smooth' });
-        }
-      } else if (text === 'CONTACT') {
-        if (!scrollToSection(['SCHEDULE A CALL', 'CONTACT US', 'GET IN TOUCH', "LET'S TALK"])) {
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-      }
+      }, 200); // small delay so menu animation doesn't fight the scroll
     }
 
     document.addEventListener('click', function(e) {
       var el = e.target;
       for (var i = 0; i < 10; i++) {
         if (!el) break;
-        var text = norm(el.textContent);
-        if ((text === 'HOME' || text === 'ABOUT' || text === 'WORK' || text === 'CONTACT') && (el.textContent || '').trim().length < 20) {
+        var t = norm(el.textContent);
+        var len = (el.textContent || '').trim().length;
+        if (len > 0 && len < 20 && (t === 'HOME' || t === 'ABOUT' || t === 'WORK' || t === 'CONTACT')) {
           e.preventDefault();
           e.stopImmediatePropagation();
           e.stopPropagation();
-          handleNav(text);
+          handleNav(t);
           return;
         }
         el = el.parentElement;
