@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 334 166" width="334" height="166">
+  <defs>
+    <linearGradient id="wdrGrad" x1="167" y1="0" x2="167" y2="166" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1a1a1a"/>
+      <stop offset="0.5" stop-color="#222222"/>
+      <stop offset="1" stop-color="#111111"/>
+    </linearGradient>
+  </defs>
+  <text x="167" y="140" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="160" fill="url(#wdrGrad)" letter-spacing="8">WDR</text>
+</svg>
