@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "1mIRao4SYCfbNNlDkU2_A"
+uri = "file://artifacts/wdr-website/public/images/wdr-wordmark.png"
+type = "image"
+title = "WDR dark wordmark text"
