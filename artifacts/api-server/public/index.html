@@ -235,6 +235,23 @@
 
   <style id="wdr-custom-styles">
   
+  
+  /* WDR wordmark text in footer */
+  .framer-gxcmsf .svgContainer svg {
+    display: none !important;
+  }
+  .framer-gxcmsf .svgContainer::after {
+    content: 'WHITE DRUNK RABBIT';
+    font-family: 'Geist', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: #fff3e2;
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+  }
+
   /* Hide testimonials section */
   .framer-q4ws1t { display: none !important; }
   /* Hide careers/jobs section */
@@ -305,9 +322,7 @@
     fill: none !important;
     color: transparent !important;
   }
-  .framer-gxcmsf .svgContainer {
-    display: none !important;
-  }
+  
   .framer-gxcmsf {
     background-image: url('/images/wdr-rabbit-nav.png') !important;
     background-size: contain !important;
