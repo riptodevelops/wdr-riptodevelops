@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd artifacts/wdr-website && cp -r public/* dist/ && cp index.html dist/",
+  "outputDirectory": "artifacts/wdr-website/dist",
+  "installCommand": "echo 'no install needed'",
+  "framework": null
+}
